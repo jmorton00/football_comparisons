@@ -40,7 +40,7 @@ def extract_teams(data):
         })
     return teams
 
-def player_info(page, total_players):
+def all_player_info(page, total_players):
     players = call_api("/players", {"league": 39, "season": 2023, "page": page})
     total_players.append(players)
 
@@ -49,7 +49,7 @@ def player_info(page, total_players):
     #     player_info(page+1)
 
     if int(players['paging']['current']) < 3:
-        player_info(page+1, total_players)
+        all_player_info(page+1, total_players)
     
     return total_players
 
@@ -90,11 +90,20 @@ def extract_players(data):
 
     return players_list
 
-def call_player_info():
-    total_players = player_info(1, [])
+def call_all_player_info():
+    total_players = all_player_info(1, [])
     extracted_total_players = extract_players(total_players)
     print(len(extracted_total_players))
     for p in extracted_total_players:
         print(f"{p['name']} ({p['nationality']}) - {p['team_name']} - {p['position']}")
 
-call_player_info()
+def player_info(season, player_id):
+    player = call_api("/players", {"season": season, "id": player_id})
+    return player
+
+def squads(team):
+    squad = call_api("/players/squads", {"team":team})
+    return squad
+
+print(squads(34))
+print(player_info(2023, 723))
